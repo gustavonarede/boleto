@@ -10,14 +10,15 @@ import br.com.boletojuros.core.port.out.ComplementoBoletoPort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class CalcularBoletoUseCase implements CalculoBoletoPort {
 
-    private final ComplementoBoletoPort complementBoletoPort;
+    private final ComplementoBoletoPort complementoBoletoPort;
 
-    public CalcularBoletoUseCase(ComplementoBoletoPort complementBoletoPort) {
-        this.complementBoletoPort = complementBoletoPort;
+    public CalcularBoletoUseCase(ComplementoBoletoPort complementoBoletoPort) {
+        this.complementoBoletoPort = complementoBoletoPort;
     }
 
 
@@ -25,7 +26,7 @@ public class CalcularBoletoUseCase implements CalculoBoletoPort {
     public BoletoCalculado executar(String codigo, LocalDate dataPagamento) {
 
 
-        var boleto = complementBoletoPort.executar(codigo);
+        var boleto = complementoBoletoPort.executar(codigo);
         //TODO - validar boleto
 
         validar(boleto);
@@ -52,5 +53,10 @@ public class CalcularBoletoUseCase implements CalculoBoletoPort {
 
             throw new ApplicationException(TipoExcecao.BOLETO_NAO_VENCIDO);
         }
+    }
+    private Long getDiasVencidos(LocalDate dataVencimento, LocalDate dataPagamento){
+
+        return ChronoUnit.DAYS.between(dataVencimento, dataPagamento);
+
     }
 }
